@@ -39,7 +39,7 @@ function initSizes(){
   
     textSize(window.height/40);
     textFont('Georgia');
-    textAlign(CENTER)
+    textAlign(CENTER, CENTER)
 
     for(let i=0; i<taglines.length; i++){
         let offset = Math.floor((taglines.length / 2)-i)
@@ -60,7 +60,7 @@ function setup() {
     });
 }
 
-function epicycles(x, y, rotation, fourier) {
+function epicycles(x, y, rotation, fourier, shown) {
   const epicyclesCeil = 2 + Math.floor(chalk.percent * (fourierX.length - 3 ));
   const vieEpicycles = 25
 
@@ -73,7 +73,7 @@ function epicycles(x, y, rotation, fourier) {
     x += radius * cos((freq * time) + phase + rotation) * s;
     y += radius * sin((freq * time) + phase + rotation) * s;
 
-    if(i>0 && i<25){
+    if(i>0 && i<25 && shown){
       stroke(255, 60);
       noFill();
       ellipse(prevx, prevy, radius * 2 * s);
@@ -105,6 +105,11 @@ class Chalk{
           this.offset = mouseX-this.x
         }
       }
+
+      setPercent(p){
+        this.percent = p
+        this.x = Math.floor(this.percent * width - this.width - 4) + 2
+      }
       
       mouseReleased(){
         this.clicked = false
@@ -128,29 +133,43 @@ class Chalk{
             //fill(150, 111, 51)
             noStroke()
             rect(this.x, this.y, this.width, this.height)
+            fill(220)
+            textSize(this.height * 0.9)
+            text('<>', this.x+this.width/2, this.y+this.height/2)
         pop()
     }
 }
 
 function draw() {
-background(bgColor);
 
-noFill()
+    //pre-draw loop
+    if(path.length<fourierX.length && path.length > 0){
+        chalk.setPercent(0.6)
+        for(let i=0; i<fourierX.length; i++){
+            time += TWO_PI / fourierX.length;
+            path.unshift(epicycles(width / 2 - fourierX[0].re * s, height / 2 -fourierX[0].im * s, 0, fourierX, false))
+        }
+        chalk.setPercent(0.75)
+    }
+
+    background(bgColor);
+
+    noFill()
 
 //draw path
-  push();
-    translate(0, window.scrollY)
-    noFill();
-    strokeWeight(2);
-    for (let i = path.length - 2; i >= 0; i--) {
-      stroke(lerpColor(color(255, 255, 255), bgColor, i / path.length));
-      line(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y);
+    push();
+        translate(0, window.scrollY)
+        noFill();
+        strokeWeight(2);
+        for (let i = path.length - 2; i >= 0; i--) {
+            stroke(lerpColor(color(255, 255, 255), bgColor, i / path.length));
+            line(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y);
 
-    }
-    strokeWeight(1);
-    path.unshift(epicycles(width / 2 - fourierX[0].re * s, height / 2 -fourierX[0].im * s, 0, fourierX));
+        }
+        strokeWeight(1);
+        path.unshift(epicycles(width / 2 - fourierX[0].re * s, height / 2 -fourierX[0].im * s, 0, fourierX, path.length !=0));
 
-  pop();
+    pop();
 
     push()
         fill(210);
@@ -172,15 +191,13 @@ noFill()
     pop()
 
 
+    chalk.show()
+    
+    time += TWO_PI / fourierX.length;
 
-chalk.show()
-
-
-  time += TWO_PI / fourierX.length;
-
-  if (time > TWO_PI) {
-    path.pop();
-  }
+    if (time > TWO_PI) {
+        path.pop();
+    }
 }
 
 function mousePressed(){
