@@ -28,7 +28,6 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: |
         npm install -g resume-cli
-        ls
-    - run: node resume
+        tree -d -L 3
     - run: ls
  
