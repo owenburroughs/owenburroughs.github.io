@@ -29,5 +29,6 @@ jobs:
     - run: |
         npm install -g resume-cli
     - run: npm install jsonresume-theme-actual
+    - run: npm install /home/runner/work/owenburroughs.github.io/owenburroughs.github.io/node_modules/jsonresume-theme-even/index.js
     - run: resume export -r _data/cv.json --format pdf Owen_Burroughs_CV.pdf
     - run: ls
