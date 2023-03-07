@@ -4,10 +4,6 @@
 name: Publish PDF of CV
 
 on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
   workflow_dispatch:
 
 jobs:
@@ -31,3 +27,13 @@ jobs:
     - run: npm install jsonresume-theme-actual
     - run: resume export -r _data/cv.json --format pdf --theme actual Owen_Burroughs_CV.pdf
     - run: ls
+    - run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add Owen_Burroughs_CV.pdf
+          git commit -m "Publishing latest PDF"
+    - name: Deploy the resume - pdf
+      uses: ad-m/github-push-action@master
+      with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          
