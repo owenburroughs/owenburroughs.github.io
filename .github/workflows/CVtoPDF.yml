@@ -13,8 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
-        with:
-          node-version: "11"
 
       - name: Install the dependencies
         run: |
@@ -23,9 +21,8 @@ jobs:
           git clone https://github.com/ghandic/jsonresume-theme-stackoverflow.git
           cd jsonresume-theme-stackoverflow
           npm install .
-          ls
           cd ..
-          ls
+          tree -d 
           mkdir public
 
       - name: Build the resume - pdf
