@@ -8,19 +8,60 @@ let bgColor;
 let knob
 let chalk
 
+let taglineSpacing
+let taglineWidth
+let taglines = [
+    {
+        "text":"Research CV (Microbiology)",
+        "onclick":()=>{console.log("clicked")}
+    },
+    {
+        "text":"Projects",
+        "onclick":()=>{console.log("clicked")}
+    },
+    {
+        "text":"Crescent Montana",
+        "onclick":()=>{console.log("clicked")}
+    }
+]
+
+let textObjects = []
+
+function initSizes(){
+    textObjects = []
+    path=[]
+    s = width/800;
+    taglineWidth = width * 0.8
+    taglineSpacing = taglineWidth / taglines.length
+    colorMode(RGB)
+    bgColor = color(37,42,52);
+    chalk = new Chalk(height-(height/11), height/4, height/10, 0.75)
+  
+    textSize(window.height/40);
+    textFont('Georgia');
+    textAlign(CENTER)
+
+    for(let i=0; i<taglines.length; i++){
+        let offset = Math.floor((taglines.length / 2)-i)
+        let XValue = Math.round((width/2) + (taglineSpacing*offset))
+        textObjects.push(new TextObject(taglines[i].text, XValue, height*0.8, taglines[i].onclick));
+    }
+}
+
 function setup() {
     let container = document.getElementById("main")
-    createCanvas(container.clientWidth, container.clientWidth * 0.5).parent("main")
+    createCanvas(container.clientWidth, windowHeight).parent("main")
 
-  s = width/800;
-  colorMode(RGB)
-  bgColor = color(37,42,52);
-  knob = new Knob(height/18, 2, fourierX.length, 800)
-  chalk = new Chalk(height-(height/11), height/4, height/10, 0.75)
+    initSizes()
+
+    addEventListener("resize", (event) => {
+        resizeCanvas(container.clientWidth, windowHeight)
+        initSizes()
+    });
 }
 
 function epicycles(x, y, rotation, fourier) {
-  const epicyclesCeil = Math.floor(chalk.percent * fourierX.length);
+  const epicyclesCeil = 2 + Math.floor(chalk.percent * (fourierX.length - 3 ));
   const vieEpicycles = 25
 
   for (let i = 0; i < epicyclesCeil; i++) {
@@ -73,7 +114,6 @@ class Chalk{
     show(){
         if(this.clicked){
             this.x = mouseX - this.offset
-            this.percent = (this.x + 2) / (width - this.width - 4)
         }
         if(this.x <2 ){
             this.x = 2
@@ -81,6 +121,7 @@ class Chalk{
         if(this.x > width - this.width - 2){
             this.x = width - this.width - 2
         }
+        this.percent = (this.x-2) / (width - this.width)
 
         push()
             fill(150, 111, 51)
@@ -94,22 +135,10 @@ function draw() {
 background(bgColor);
 
 noFill()
-//draw border
-push()
-    stroke(150, 111, 51)
-    strokeWeight(height/18)
-    rect(0,0,width,height)
-pop()
 
-
-//draw slider
-//knob.show()
-
-//show chalk
-chalk.show()
-  
 //draw path
   push();
+    translate(0, window.scrollY)
     noFill();
     strokeWeight(2);
     for (let i = path.length - 2; i >= 0; i--) {
@@ -117,9 +146,32 @@ chalk.show()
       line(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y);
 
     }
+    strokeWeight(1);
+    path.unshift(epicycles(width / 2 - fourierX[0].re * s, height / 2 -fourierX[0].im * s, 0, fourierX));
+
   pop();
 
-  path.unshift(epicycles(width / 2 - fourierX[0].re * s, height / 2 -fourierX[0].im * s, 0, fourierX));
+    push()
+        fill(210);
+        //paralax translation
+        translate(0, window.scrollY * 0.65)  
+        //add the text
+        for(let text of textObjects){
+            text.show()
+        }
+    pop()
+
+    //draw border
+    push()
+    stroke(150, 111, 51)
+    strokeWeight(height/18)
+    rect(0,0,width,height)
+    pop()
+
+
+
+chalk.show()
+
 
   time += TWO_PI / fourierX.length;
 
@@ -144,67 +196,53 @@ function mouseReleased(){
   if(chalk){
     chalk.mouseReleased();
   }
-}
-
-class Knob {
-  constructor(r,min,max, value){
-    this.r = r
-    this.x = this.r*2
-    this.y = height-this.r*2
-    this.min = min
-    this.max = max
-    this.value = value
-    this.rotation = 1.25 * PI - value/max * 1.5 * PI
-    this.clicked = false
-    
-    this.indicatorR = this.r*0.4
-    this.indicatorDis = this.r * 0.7
-  }
-  
-  mousePressed(){
-    if(dist(mouseX, mouseY, this.x, this.y) < this.r){
-      this.clicked = true
-      this.prevValue = this.value + mouseY * 2
+  if(textObjects.length==taglines.length){
+    for(let text of textObjects){
+        text.mouseReleased()
     }
   }
-  
-  mouseReleased(){
-    this.clicked = false
-  }
-  
-  show(){
-    
-    if(this.clicked){
-      let newValue = this.prevValue - mouseY * 2
-      if (newValue < this.max){
-        if(newValue > this.min){
-          this.value = newValue
-        }else{
-          this.value = this.min
+}
+
+class TextObject{
+    constructor(str,x,y, onclick){
+        this.str = str
+        this.width = textWidth(this.str)
+        this.x = x
+        this.y= y
+        this.onclick = onclick
+    }
+
+    mouseReleased(){
+        if(mouseX<(this.x+this.width/2) && 
+            mouseX>(this.x-this.width/2) &&
+            mouseY>(this.y - this.height/2) && 
+            mouseY<(this.y - this.height/2)){
+                try{
+                    this.onclick()
+                }catch(e){
+                    console.error(e)
+                }
         }
-      }else{
-        this.value = this.max
-      }
     }
-    
-    //calculate the rotation of the indicator wheel
-    this.rotation = 1.25 * PI - this.value/this.max * 1.5 * PI
-    
-    let indicatorX = this.indicatorDis * Math.cos(this.rotation)
-    let indicatorY = -1 * this.indicatorDis * Math.sin(this.rotation)
-    
-    
-    push()
-      translate(this.x, this.y)
-      fill(150)
-      ellipse(0,0, this.r * 2)
-      fill(0)
-      ellipse(indicatorX, indicatorY, this.indicatorR)
-    pop()
-  }
+
+    show(){
+        if(mouseX<(this.x+this.width/2) && 
+            mouseX>(this.x-this.width/2) &&
+            mouseY>(this.y - window.height/40) && 
+            mouseY<(this.y)){
+                textStyle(ITALIC);
+                fill(255)
+        }
+       text(this.str, this.x, this.y)
+       fill(210)
+       textStyle(NORMAL);
+    }
 }
 
-let fourierX = [
+
+
+
+var fourierX = [
     {
         "re": -147.25787427549264,
         "im": 36.38764337085987,
