@@ -30,4 +30,5 @@ jobs:
         npm install -g resume-cli
     - run: ls
     - run: npm ls
+    - run: resume
  
