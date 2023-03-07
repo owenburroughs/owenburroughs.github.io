@@ -1,0 +1,52 @@
+# example GitHub workflow
+
+name: Publish resume in JSONResume format as PDF
+ 
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  check_run:
+    runs-on: ubuntu-latest
+    if: "! contains(github.event.head_commit.message, '[ci skip]')"
+    steps:
+      - run: echo "${{ github.event.head_commit.message }}"
+
+  name: "Publish Resume"
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  publish_resume:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "11"
+
+      - name: Install the dependencies
+        run: |
+          apt-get update && apt-get install -y git
+          npm install resume-cli
+          git clone https://github.com/ghandic/jsonresume-theme-stackoverflow.git
+          cd jsonresume-theme-stackoverflow
+          npm install .
+          cd ..
+          mkdir public
+
+      - name: Build the resume - pdf
+        run: |
+          script --return --quiet -c "./node_modules/.bin/resume-cli export _data/cv.json --theme stackoverflow --format pdf Owen_Burroughs_Resume.pdf" /dev/null
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add Owen_Burroughs_Resume.pdf
+          git commit -m "Publishing latest PDF"
+
+      - name: Deploy the resume - pdf
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
