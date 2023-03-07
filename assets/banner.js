@@ -8,9 +8,7 @@ let bgColor;
 let knob
 
 function setup() {
-    let container = document.getElementById("main")
-    createCanvas(container.clientWidth, container.clientWidth * 0.5).parent("main")
-
+  createCanvas(window.innerWidth, window.innerWidth * 0.4).parent("animatedBanner");
   s = width/800;
   colorMode(RGB)
   bgColor = color(37,42,52);
