@@ -32,7 +32,9 @@ jobs:
         run: |
           cd node_modules
           cd resume-cli
+          cd build
           ls
+          cd ..
           cd ..
           cd ..
           script --return --quiet -c "node_modules/resume-cli export _data/cv.json --theme stackoverflow --format pdf Owen_Burroughs_Resume.pdf" /dev/null
