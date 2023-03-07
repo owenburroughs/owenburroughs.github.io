@@ -22,7 +22,7 @@ jobs:
           cd jsonresume-theme-stackoverflow
           npm install .
           cd ..
-          tree -d 
+          ls
           mkdir public
 
       - name: Build the resume - pdf
