@@ -30,6 +30,9 @@ jobs:
 
       - name: Build the resume - pdf
         run: |
+          cd node_modules
+          ls
+          cd ..
           script --return --quiet -c "node_modules/.bin/resume-cli export _data/cv.json --theme stackoverflow --format pdf Owen_Burroughs_Resume.pdf" /dev/null
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
