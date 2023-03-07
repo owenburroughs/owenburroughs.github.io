@@ -124,7 +124,8 @@ class Chalk{
         this.percent = (this.x-2) / (width - this.width)
 
         push()
-            fill(150, 111, 51)
+            fill(255)
+            //fill(150, 111, 51)
             noStroke()
             rect(this.x, this.y, this.width, this.height)
         pop()
@@ -163,7 +164,9 @@ noFill()
 
     //draw border
     push()
-    stroke(150, 111, 51)
+    //stroke(150, 111, 51)
+    noFill()
+    stroke(255)
     strokeWeight(height/18)
     rect(0,0,width,height)
     pop()
