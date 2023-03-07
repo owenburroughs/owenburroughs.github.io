@@ -16,13 +16,16 @@ jobs:
 
       - name: Install the dependencies
         run: |
-          apt-get update && apt-get install -y git
+          sudo apt-get update && apt-get install -y git
           npm install resume-cli
           git clone https://github.com/ghandic/jsonresume-theme-stackoverflow.git
           cd jsonresume-theme-stackoverflow
           npm install .
           cd ..
           ls
+          cd node_modules
+          ls
+          cd..
           mkdir public
 
       - name: Build the resume - pdf
