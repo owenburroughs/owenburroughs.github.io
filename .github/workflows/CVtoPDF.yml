@@ -23,7 +23,9 @@ jobs:
           git clone https://github.com/ghandic/jsonresume-theme-stackoverflow.git
           cd jsonresume-theme-stackoverflow
           npm install .
+          ls
           cd ..
+          ls
           mkdir public
 
       - name: Build the resume - pdf
