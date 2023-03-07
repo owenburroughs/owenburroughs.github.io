@@ -28,6 +28,6 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: |
         npm install -g resume-cli
-    - run: resume export -r cv.json --format pdf
+    - run: resume export -r cv.json --format pdf Owen_Burroughs_CV.pdf
     - run: ls
  
