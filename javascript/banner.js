@@ -6,6 +6,7 @@ let XOffset = -400;
 let YOffset = -50;
 let bgColor;
 let knob
+let chalk
 
 function setup() {
     let container = document.getElementById("main")
@@ -15,10 +16,11 @@ function setup() {
   colorMode(RGB)
   bgColor = color(37,42,52);
   knob = new Knob(height/18, 2, fourierX.length, 800)
+  chalk = new Chalk(height-(height/11), height/4, height/10, 0.75)
 }
 
 function epicycles(x, y, rotation, fourier) {
-  const epicyclesCeil = knob.value;
+  const epicyclesCeil = Math.floor(chalk.percent * fourierX.length);
   const vieEpicycles = 25
 
   for (let i = 0; i < epicyclesCeil; i++) {
@@ -41,10 +43,70 @@ function epicycles(x, y, rotation, fourier) {
   return createVector(x, y);
 }
 
+class Chalk{
+    constructor(y, Xwidth, Xheight, percent){
+        this.y = y
+        this.width = Xwidth
+        this.height = Xheight
+        this.percent = percent
+        this.x = Math.floor(this.percent * width - this.width - 4) + 2
+        console.log([this.x, width])
+        this.clicked = false
+        this.offset
+    }
+
+    mousePressed(){
+        if(mouseX<(this.x+this.width) && 
+            mouseX>(this.x) &&
+            mouseY<(this.y+this.height) && 
+            mouseY>(this.y)){
+          this.clicked = true
+          this.offset = mouseX-this.x
+        }
+      }
+      
+      mouseReleased(){
+        this.clicked = false
+      }
+
+
+    show(){
+        if(this.clicked){
+            this.x = mouseX - this.offset
+            this.percent = (this.x + 2) / (width - this.width - 4)
+        }
+        if(this.x <2 ){
+            this.x = 2
+        }
+        if(this.x > width - this.width - 2){
+            this.x = width - this.width - 2
+        }
+
+        push()
+            fill(150, 111, 51)
+            noStroke()
+            rect(this.x, this.y, this.width, this.height)
+        pop()
+    }
+}
+
 function draw() {
-  background(bgColor);
+background(bgColor);
+
+noFill()
+//draw border
+push()
+    stroke(150, 111, 51)
+    strokeWeight(height/18)
+    rect(0,0,width,height)
+pop()
+
+
 //draw slider
-  knob.show()
+//knob.show()
+
+//show chalk
+chalk.show()
   
 //draw path
   push();
@@ -70,11 +132,17 @@ function mousePressed(){
   if(knob){
     knob.mousePressed();
   }
+  if(chalk){
+    chalk.mousePressed();
+  }
 }
 
 function mouseReleased(){
   if(knob){
     knob.mouseReleased()
+  }
+  if(chalk){
+    chalk.mouseReleased();
   }
 }
 
