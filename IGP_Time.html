@@ -1,0 +1,12 @@
+<script>
+    let t0= 1691157600000
+    let now = new Date().valueOf() 
+    let timeSince = now - t0
+    let year = 31556952000
+    yearsLeft = 5.7 - (timeSince/year)
+    window.onload = function(){
+        document.getElementById('time').innerHTML = "There are " + yearsLeft.toFixed(3) + " years left for the 23/24 IGP cohort."
+    }
+</script>
+
+<h1 id="time"></h1>
