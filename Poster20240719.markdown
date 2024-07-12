@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Figure 5: Timelapse of LytRS Activation with Macrophages
+title: Figure 5. Timelapse of LytRS Activation with Macrophages
 permalink: /poster20240719
 ---
 <iframe width="560" height="315" src="https://www.youtube.com/embed/IARHEpIXFsE?si=gCC0qS0uItBOolEE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
